@@ -1,59 +1,46 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "tw-:inline-flex tw-:items-center tw-:justify-center tw-:gap-2 tw-:whitespace-nowrap tw-:rounded-md tw-:text-sm tw-:font-medium tw-:transition-all tw-:disabled:pointer-events-none tw-:disabled:opacity-50 tw-:[&_svg]:pointer-events-none tw-:[&_svg:not([class*=size-])]:size-4 tw-:shrink-0 tw-:[&_svg]:shrink-0 tw-:outline-none tw-:focus-visible:border-slate-950 tw-:focus-visible:ring-slate-950/50 tw-:focus-visible:ring-[3px] tw-:aria-invalid:ring-red-500/20 tw-:dark:aria-invalid:ring-red-500/40 tw-:aria-invalid:border-red-500 tw-:dark:focus-visible:border-slate-300 tw-:dark:focus-visible:ring-slate-300/50 tw-:dark:aria-invalid:ring-red-900/20 tw-:dark:dark:aria-invalid:ring-red-900/40 tw-:dark:aria-invalid:border-red-900",
+  "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default:
-          "tw-:bg-slate-900 tw-:text-slate-50 tw-:shadow-xs tw-:hover:bg-slate-900/90 tw-:dark:bg-slate-50 tw-:dark:text-slate-900 tw-:dark:hover:bg-slate-50/90",
-        destructive:
-          "tw-:bg-red-500 tw-:text-white tw-:shadow-xs tw-:hover:bg-red-500/90 tw-:focus-visible:ring-red-500/20 tw-:dark:focus-visible:ring-red-500/40 tw-:dark:bg-red-500/60 tw-:dark:bg-red-900 tw-:dark:hover:bg-red-900/90 tw-:dark:focus-visible:ring-red-900/20 tw-:dark:dark:focus-visible:ring-red-900/40 tw-:dark:dark:bg-red-900/60",
-        outline:
-          "tw-:border tw-:bg-white tw-:shadow-xs tw-:hover:bg-slate-100 tw-:hover:text-slate-900 tw-:dark:bg-slate-200/30 tw-:dark:border-slate-200 tw-:dark:hover:bg-slate-200/50 tw-:dark:bg-slate-950 tw-:dark:hover:bg-slate-800 tw-:dark:hover:text-slate-50 tw-:dark:dark:bg-slate-800/30 tw-:dark:dark:border-slate-800 tw-:dark:dark:hover:bg-slate-800/50",
-        secondary:
-          "tw-:bg-slate-100 tw-:text-slate-900 tw-:shadow-xs tw-:hover:bg-slate-100/80 tw-:dark:bg-slate-800 tw-:dark:text-slate-50 tw-:dark:hover:bg-slate-800/80",
-        ghost:
-          "tw-:hover:bg-slate-100 tw-:hover:text-slate-900 tw-:dark:hover:bg-slate-100/50 tw-:dark:hover:bg-slate-800 tw-:dark:hover:text-slate-50 tw-:dark:dark:hover:bg-slate-800/50",
-        link: "tw-:text-slate-900 tw-:underline-offset-4 tw-:hover:underline tw-:dark:text-slate-50",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "tw-:h-9 tw-:px-4 tw-:py-2 tw-:has-[>svg]:px-3",
-        sm: "tw-:h-8 tw-:rounded-md tw-:gap-1.5 tw-:px-3 tw-:has-[>svg]:px-2.5",
-        lg: "tw-:h-10 tw-:rounded-md tw-:px-6 tw-:has-[>svg]:px-4",
-        icon: "tw-:size-9",
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10",
       },
     },
     defaultVariants: {
       variant: "default",
       size: "default",
     },
-  }
+  },
 )
 
-function Button({
-  className,
-  variant,
-  size,
-  asChild = false,
-  ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
-  const Comp = asChild ? Slot : "button"
-
-  return (
-    <Comp
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
-  )
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
 }
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button"
+    return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />
+  },
+)
+Button.displayName = "Button"
 
 export { Button, buttonVariants }
